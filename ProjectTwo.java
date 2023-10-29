@@ -6,6 +6,7 @@ public class ProjectTwo {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
+        System.out.println();
         System.out.print("Enter the number of linear equations (n <= 10): ");
         int n = scanner.nextInt();
 
@@ -19,6 +20,7 @@ public class ProjectTwo {
 
         if (inputMethod == 1) {
             // Read coefficients from the command line
+            System.out.println();
             System.out.println("Enter the coefficients for each equation:");
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j <= n; j++) {
@@ -53,6 +55,7 @@ public class ProjectTwo {
         }
 
         // Enter initial solution
+        System.out.println();       // blank line for readability
         System.out.println("Enter the initial solution:");
         for (int i = 0; i < n; i++) {
             initialSolution[i] = scanner.nextDouble();
@@ -179,7 +182,7 @@ public class ProjectTwo {
 
     public static boolean isDiagonallyDominant(double[][] matrix) {
         int numRows = matrix.length;
-        int numCols = matrix[0].length;
+        int numCols = matrix[0].length - 1;
 
         if (numRows != numCols) {
             // The matrix must be square to be diagonally dominant.
