@@ -47,6 +47,10 @@ public class ProjectTwo {
             scanner.close();
             return;
         }
+        boolean diagDominant = isDiagonallyDominant(coefficients);
+        if (!diagDominant) {
+            System.out.println("This system is not diagonally dominant therefore this system may or may not converge.");
+        }
 
         // Enter initial solution
         System.out.println("Enter the initial solution:");
@@ -171,5 +175,33 @@ public class ProjectTwo {
             }
         }
         System.out.println("]T");
+    }
+
+    public static boolean isDiagonallyDominant(double[][] matrix) {
+        int numRows = matrix.length;
+        int numCols = matrix[0].length;
+
+        if (numRows != numCols) {
+            // The matrix must be square to be diagonally dominant.
+            return false;
+        }
+
+        for (int i = 0; i < numRows; i++) {
+            double diagonalValue = Math.abs(matrix[i][i]);
+            double sumOfOtherValues = 0.0;
+
+            for (int j = 0; j < numCols; j++) {
+                if (j != i) {
+                    sumOfOtherValues += Math.abs(matrix[i][j]);
+                }
+            }
+
+            if (diagonalValue < sumOfOtherValues) {
+                return false;
+            }
+        }
+
+        // If the loop completes without finding any violations, the matrix is diagonally dominant.
+        return true;
     }
 }
