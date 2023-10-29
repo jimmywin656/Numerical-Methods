@@ -25,10 +25,6 @@ public class ProjectTwo {
                     coefficients[i][j] = scanner.nextDouble();
                 }
             }
-            System.out.println("Enter the initial solution:");
-            for (int i = 0; i < n; i++) {
-                initialSolution[i] = scanner.nextDouble();
-            }
         } else if (inputMethod == 2) {
             // Read coefficients from a file
             System.out.print("Enter the file name: ");
@@ -39,10 +35,6 @@ public class ProjectTwo {
                     for (int j = 0; j <= n; j++) {
                         coefficients[i][j] = fileScanner.nextDouble();
                     }
-                }
-                System.out.println("Enter the initial solution:");
-                for (int i = 0; i < n; i++) {
-                    initialSolution[i] = scanner.nextDouble();
                 }
                 fileScanner.close();
             } catch (FileNotFoundException e) {
@@ -56,54 +48,77 @@ public class ProjectTwo {
             return;
         }
 
+        // Enter initial solution
+        System.out.println("Enter the initial solution:");
+        for (int i = 0; i < n; i++) {
+            initialSolution[i] = scanner.nextDouble();
+        }
+
         System.out.print("Enter the desired stopping error: ");
         double error = scanner.nextDouble();
+        scanner.close();
+        System.out.println();
 
         System.out.println("Using Jacobi Iterative Method:");
         double[] jacobiSolution = jacobi(coefficients, initialSolution, error);
         printSolution(jacobiSolution);
+        System.out.println();
 
         System.out.println("Using Gauss-Seidel Iterative Method:");
         double[] gaussSeidelSolution = gaussSeidel(coefficients, initialSolution, error);
         printSolution(gaussSeidelSolution);
+        System.out.println();
 
-        scanner.close();
-    }
+    }   // end main
 
     public static double[] jacobi(double[][] coefficients, double[] initialSolution, double error) {
-        int n = initialSolution.length;
-        double[] currentSolution = new double[n];
-        int maxIterations = 50;
+        int iterations = 1;
+        int n = coefficients.length;
+        double[] currentSolution = new double[n]; // Approximations
+        double[] prevSolution = new double[n]; // Prev
 
-        for (int iteration = 1; iteration <= maxIterations; iteration++) {
-            for (int i = 0; i < n; i++) {
-                double sum = coefficients[i][n];
-                for (int j = 0; j < n; j++) {
-                    if (j != i) {
-                        sum -= coefficients[i][j] * initialSolution[j];
-                    }
-                }
-                currentSolution[i] = sum / coefficients[i][i];
-            }
-            initialSolution = currentSolution;
+        while (true) {
+        for (int i = 0; i < n; i++) {
+            double sum = coefficients[i][n]; // b_n
 
-            double l2Norm = calculateL2Norm(coefficients, currentSolution);
-            System.out.print("Iteration " + iteration + ": ");
-            printSolution(currentSolution);
+            for (int j = 0; j < n; j++)
+            if (j != i)
+                sum -= coefficients[i][j] * prevSolution[j];
 
-            if (l2Norm < error) {
-                System.out.println("Converged to the desired error.");
-                return currentSolution;
-            }
+            // Update x_i but it's no used in the next row calculation
+            // but up to de next iteration of the method
+            currentSolution[i] = 1/coefficients[i][i] * sum;
         }
 
-        System.out.println("Did not reach the desired error after 50 iterations.");
-        return currentSolution;
+        System.out.print("Iteration " + iterations + ": ");
+        printSolution(currentSolution);
+
+        boolean done = true;
+        for (int i = 0; i < n && done; i++)
+            if (Math.abs(currentSolution[i] - prevSolution[i]) > error)
+                done = false;
+
+        if (done) {
+            System.out.println("Converged to the desired error.");
+            return currentSolution;
+        }
+
+        if (iterations == 50) {
+            System.out.print("Did not reach the desired error. Approximation after 50 iterations: ");
+            break;
+        } 
+        
+        prevSolution = (double[])currentSolution.clone();
+        iterations++;
+        }
+
+        return prevSolution;
+
     }
 
     public static double[] gaussSeidel(double[][] coefficients, double[] initialSolution, double error) {
         int n = initialSolution.length;
-        double[] currentSolution = new double[n];
+        double[] currentSolution = new double[n];   // this will hold the answers to be used in the next step
         int maxIterations = 50;
 
         for (int iteration = 1; iteration <= maxIterations; iteration++) {
@@ -127,10 +142,11 @@ public class ProjectTwo {
             }
         }
 
-        System.out.println("Did not reach the desired error after 50 iterations.");
+        System.out.println("Did not reach the desired error. Approximation after 50 iterations: ");
         return currentSolution;
     }
 
+    // public static double calculateL2Norm(double[] currentSolution, double[] prevSolution) {
     public static double calculateL2Norm(double[][] coefficients, double[] solution) {
         int n = solution.length;
         double sum = 0.0;
