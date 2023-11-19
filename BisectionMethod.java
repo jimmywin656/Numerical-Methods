@@ -8,8 +8,8 @@ public class BisectionMethod {
         Function<Double, Double> function = x -> 2*(x*x*x) - 11.7*(x*x) + 17.7*x - 5;
 
         // Specify the interval [a, b] where the root is expected
-        double a = 1.0;         // intervals for all 3 roots: (0,1) , (1,3) , (3,4)
-        double b = 3.0;
+        double a = 3.0;         // intervals for all 3 roots: (0,1) , (1,3) , (3,4)
+        double b = 4.0;
 
         // Set the tolerance level for convergence
         double tolerance = 0.01;
@@ -18,7 +18,9 @@ public class BisectionMethod {
         double root = bisectionMethod(function, a, b, 100, tolerance);
 
         // Print the root
-        System.out.println("Root: " + root);
+        System.out.println();
+        System.out.println("Function converges at Root: " + root);
+        System.out.println();
     }
 
     // Bisection method implementation
@@ -33,6 +35,9 @@ public class BisectionMethod {
 
         double currentError = b - a;
 
+        System.out.println();
+        System.out.println("Bisection Method");
+        System.out.println("------------------------------------------------");
         System.out.println("n \t c \t\t f(c) \t\t error");
         System.out.println("------------------------------------------------");
         for (int i = 0; i < maxIter; i++) {
@@ -42,7 +47,6 @@ public class BisectionMethod {
             printLine(i, c, fc, currentError);
 
             if (Math.abs(currentError) < error) {
-                System.out.println("convergence");
                 return c;   // return estimated root
             }
             if (fa*fc < 0) {        // signs != 
