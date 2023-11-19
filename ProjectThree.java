@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.function.Function;
 
 public class ProjectThree {
@@ -6,123 +7,247 @@ public class ProjectThree {
         double tolerance = 0.01; // Error tolerance (ea)
         int maxIterations = 100;
         
-        // double a = 0.0; // Lower bound of the interval
-        // double b = 4.0; // Upper bound of the interval
+        double a = 0.0; // Lower bound of the interval
+        double b = 1.0; // Upper bound of the interval
 
         // Define the function
         Function<Double, Double> function = x -> 2 * Math.pow(x, 3) - 11.7 * Math.pow(x, 2) + 17.7 * x - 5;
 
+        Function<Double, Double> bfunc = x -> Math.pow(x, 3) - 3*x + 1;
+
         // Root-finding methods
-        double bisectionResult = bisectionMethod(function, a, b, tolerance, maxIterations);
-        double newtonRaphsonResult = newtonRaphsonMethod(function, a, tolerance, maxIterations);
-        double secantResult = secantMethod(function, a, b, tolerance, maxIterations);
-        double falsePositionResult = falsePositionMethod(function, a, b, tolerance, maxIterations);
+        double bisectionResult = bisectionMethod(bfunc, a, b, maxIterations, tolerance);
+        double falsePositionResult = falsePositionMethod(function, a, b, maxIterations, tolerance);
 
+        // for newton raphson
+        double initialGuess = 1.0;
+        // for secant method
+        double x0 = 0.0;
+        double x1 = 1.0;
+
+         // Define the derivative of function 1
+         Function<Double, Double> derivative = x -> 6*(x*x) - 23.4*x + 17.7;
+
+        double newtonRaphsonResult = newtonRaphsonMethod(function, derivative, initialGuess, tolerance);
+        double secantResult = secantMethod(function, x0, x1, tolerance);
+
+        
     }
 
-    public static double bisectionMethod(Function<Double, Double> f, double a, double b, double tolerance, int maxIterations) {
-      double fa = f.apply(a);
-      double fb = f.apply(b);
-  
-      if (fa * fb >= 0) {
-          throw new IllegalArgumentException("The function values at the interval boundaries must have different signs.");
-      }
-  
-      for (int i = 1; i <= maxIterations; i++) {
-          double c = (a + b) / 2;
-          double fc = f.apply(c);
-  
-          if (fc == 0 || (b - a) / 2 < tolerance) {
-              return c; // The root is found or the interval is within tolerance
-          }
-  
-          if (fa * fc < 0) {
-              b = c;
-              fb = fc;
-          } else {
-              a = c;
-              fa = fc;
-          }
-      }
-  
-      throw new IllegalStateException("Bisection method did not converge within the maximum number of iterations.");
-  }
-  
+    private static double bisectionMethod(Function<Double, Double> function, double a, double b, int maxIter,double error) {
+        double fa = function.apply(a);
+        double fb = function.apply(b);
 
-    public static double newtonRaphsonMethod(Function<Double, Double> f, double initialGuess, double tolerance, int maxIterations) {
-    double x0 = initialGuess;
-
-    for (int i = 1; i <= maxIterations; i++) {
-        double fx0 = f.apply(x0);
-        double dfx0 = derivative(f, x0);
-
-        if (dfx0 == 0) {
-            throw new ArithmeticException("Derivative is zero, Newton-Raphson method cannot continue.");
+        if (fa*fb > 0) {      // signs =
+            System.out.println("Function has same signs at a and b");
+            return Double.NaN;
         }
 
-        double x1 = x0 - fx0 / dfx0;
+        double currentError = b - a;
 
-        if (Math.abs(x1 - x0) < tolerance) {
-            return x1; // The root is found
+        System.out.println();
+        System.out.println("Bisection Method");
+        System.out.println("------------------------------------------------");
+        System.out.println("n \t c \t\t f(c) \t\t error \\t\\t rel. approx. err");
+        System.out.println("------------------------------------------------");
+        for (int i = 0; i < maxIter; i++) {
+            currentError = currentError/2;
+            double c = a + currentError;
+            double fc = function.apply(c);
+
+            printBisection(i, c, fc, currentError);
+
+            if (Math.abs(currentError) < error) {
+                // Print the root
+                System.out.println();
+                System.out.println("Function converges at Root: " + c);
+                System.out.println();
+                return c;   // return estimated root
+            }
+            if (fa*fc < 0) {        // signs != 
+                b = c;
+                fb = fc;
+            } else {
+                a = c;
+                fa = fc;
+            }
         }
 
-        x0 = x1;
+        // Maximum iterations reached
+        System.out.println("Maximum iterations reached without convergence.");
+        return Double.NaN;      // or return c if you want the latest root at n=100
     }
 
-    throw new IllegalStateException("Newton-Raphson method did not converge within the maximum number of iterations.");
-}
+    private static double falsePositionMethod(Function<Double, Double> function, double a, double b, int maxIter, double error) {
+        double fa = function.apply(a);
+        double fb = function.apply(b);
 
-    public static double secantMethod(Function<Double, Double> f, double x0, double x1, double tolerance, int maxIterations) {
-    double xnMinus1 = x0;
-    double xn = x1;
-
-    for (int i = 1; i <= maxIterations; i++) {
-        double fxnMinus1 = f.apply(xnMinus1);
-        double fxn = f.apply(xn);
-
-        if (Math.abs(fxn - fxnMinus1) < tolerance) {
-            return xn; // The root is found
+        if (fa * fb > 0) {      // signs =
+            System.out.println("Function has same signs at a and b");
+            return Double.NaN;
         }
 
-        double xNext = xn - fxn * (xn - xnMinus1) / (fxn - fxnMinus1);
+        System.out.println();
+        System.out.println("False Position Method");
+        System.out.println("------------------------------------------------");
+        System.out.println("n \t c \t\t f(c) \t      error");
+        System.out.println("------------------------------------------------");
 
-        xnMinus1 = xn;
-        xn = xNext;
-    }
+        double prevC = (a * fb - b * fa) / (fb - fa);
 
-    throw new IllegalStateException("Secant method did not converge within the maximum number of iterations.");
-}
+        for (int i = 0; i < maxIter; i++) {
+            double c = (a * fb - b * fa) / (fb - fa);
+            double fc = function.apply(c);
+            double ea;
 
+            if (i == 0) {
+                ea = 1.0;
+            } else {
+                // calculate the approx rel err     // fix this
+                ea = Math.abs((prevC - c) / prevC);
+            }
 
-    public static double falsePositionMethod(Function<Double, Double> f, double a, double b, double tolerance, int maxIterations) {
-    double fa = f.apply(a);
-    double fb = f.apply(b);
+            printFalsePosition(i, c, fc, ea);
 
-    if (fa * fb >= 0) {
-        throw new IllegalArgumentException("The function values at the interval boundaries must have different signs.");
-    }
+            if (ea < error) {
+                // Print the root
+                System.out.println();
+                System.out.println("Function converges at Root: " + c);
+                System.out.println();
+                return c;   // return estimated root
+            }
 
-    double c = 0.0; // Initialize c
+            // update prevC for next iteration
+            prevC = c;
 
-    for (int i = 1; i <= maxIterations; i++) {
-        c = (a * fb - b * fa) / (fb - fa);
-        double fc = f.apply(c);
-
-        if (Math.abs(fc) < tolerance) {
-            return c; // The root is found
+            if (fa * fc < 0) {
+                b = c;
+                fb = fc;
+            } else {
+                a = c;
+                fa = fc;
+            }
         }
 
-        if (fa * fc < 0) {
-            b = c;
-            fb = fc;
-        } else {
-            a = c;
-            fa = fc;
-        }
+        // Maximum iterations reached
+        System.out.println("Maximum iterations reached without convergence.");
+        return Double.NaN;      // or return c if you want the latest root at n=100
     }
 
-    throw new IllegalStateException("False Position method did not converge within the maximum number of iterations.");
-}
+    private static double newtonRaphsonMethod(Function<Double, Double> function, Function<Double, Double> derivative, double initialGuess, double tolerance) {
+        
+        double prev = initialGuess;
+        double x0 = initialGuess;
+
+        System.out.println();
+        System.out.println("Newton Raphson Method");
+        System.out.println("--------------------------------------------------");
+        System.out.println("n \t x \t\t f(x) \t\t error");
+        System.out.println("--------------------------------------------------");
+        for (int i = 0; i < 100; i++) {
+            double fx = function.apply(x0);
+            double fPrimeX = derivative.apply(x0);
+
+            prev = x0;
+            x0 = x0 - fx / fPrimeX;
+            
+            // calculate the approximate relative error
+            double ea = Math.abs((x0 - prev) / x0);
+
+            printNewton(i, prev, fx, ea);
+
+            if (ea < tolerance) {
+                // Print the root
+                System.out.println();
+                System.out.println("Function converges at Root: " + x0);
+                System.out.println();
+                return x0;      // return estimated root
+            }
+        }
+
+        // Max iterations reached
+        System.out.println("Maximum iterations reached without convergence.");
+        return Double.NaN;      // or can return x0 if you want the latest estimated root
+    }
+
+    private static double secantMethod(Function<Double, Double> function, double x0, double x1, double tolerance) {
+        System.out.println();
+        System.out.println("Secant Method");
+        System.out.println("------------------------------------------------");
+        System.out.println("n \t x \t\t f(x) \t\t error");
+        System.out.println("------------------------------------------------");
+
+        for (int i = 0; i < 100; i++) {
+            double fx0 = function.apply(x0);
+            double fx1 = function.apply(x1);
+
+            // update the estimates using the secant formula
+            double x2 = x1 - fx1 * ((x1 - x0) / (fx1 - fx0));
+
+            // calculate the approx. rel err
+            double ea = Math.abs((x2-x1) / x2);
+
+            printSecant(i, fx0, fx1, ea);
+
+            x0 = x1;
+            x1 = x2;
+
+            if (ea < tolerance) {
+                // Print the root
+                System.out.println();
+                System.out.println("Function converges at Root: " + x1);
+                System.out.println();
+                return x1;      // return estimated root
+            }
+        }
+
+        // Max iterations reached
+        System.out.println("Maximum iterations reached without convergence.");
+        return Double.NaN;
+    }
+
+    private static void printBisection(int n, double c, double fc, double error) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.####");
+
+        String formattedC = decimalFormat.format(c);
+        String formattedFc = decimalFormat.format(fc);
+        String formattedErr = decimalFormat.format(error);
+
+        System.out.println(n + "\t" + formattedC + "\t\t" + formattedFc + "\t\t" + formattedErr);
+    }
+
+    private static void printFalsePosition(int n, double c, double fc, double error) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.####");
+
+        String formattedC = decimalFormat.format(c);
+        String formattedFc = decimalFormat.format(fc);
+        String formattedErr = decimalFormat.format(error);
+
+        System.out.println(n + "\t" + formattedC + "\t\t" + formattedFc + "\t\t" + formattedErr);
+    }
+
+    private static void printNewton(int n, double x, double fx, double ea) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.####");
+    
+        String formattedN = String.format("%-9d", n);
+        String formattedX = String.format("%-16s", decimalFormat.format(x));
+        String formattedFx = String.format("%-16s", decimalFormat.format(fx));
+        String formattedEa = String.format("%-20s", decimalFormat.format(ea));
+    
+        System.out.println(formattedN + formattedX + formattedFx + formattedEa);
+    }
+
+    private static void printSecant(int n, double x, double fx, double ea) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.####");
+        DecimalFormat errorFormat = new DecimalFormat("#.######");
+    
+        String formattedN = String.format("%-9d", n);
+        String formattedX = String.format("%-16s", decimalFormat.format(x));
+        String formattedFx = String.format("%-16s", decimalFormat.format(fx));
+        String formattedEa = String.format("%-20s", decimalFormat.format(ea));
+    
+        System.out.println(formattedN + formattedX + formattedFx + formattedEa);
+    }
 
 
     public static double derivative(Function<Double, Double> f, double x) {
