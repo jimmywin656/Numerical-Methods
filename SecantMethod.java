@@ -8,21 +8,26 @@ public class SecantMethod {
         Function<Double, Double> function = x -> 2*(x*x*x) - 11.7*(x*x) + 17.7*x - 5;
 
         // Initial guesses for the roots
-        double x0 = 3.0;
+        double x0 = 3.0;            // (0,1) , (1,3), (3,4)
         double x1 = 4.0;
 
         // Set the tolerance level for convergence
-        double tolerance = 0.0001;
+        double tolerance = 0.01;
 
         // Find the root using the secant method
         double root = secantMethod(function, x0, x1, tolerance);
 
         // Print the result
-        System.out.println("Root: " + root);
+        System.out.println();
+        System.out.println("Function converges at Root: " + root);
+        System.out.println();
     }
 
     // Secant method implementation
     private static double secantMethod(Function<Double, Double> function, double x0, double x1, double tolerance) {
+        System.out.println();
+        System.out.println("Secant Method");
+        System.out.println("--------------------------------");
         System.out.println("n \t x \t\t f(x)");
         System.out.println("--------------------------------");
 
@@ -33,7 +38,6 @@ public class SecantMethod {
             printLine(i, fx0, fx1);
 
             if (Math.abs(fx1) < tolerance) {
-                System.out.println("convergence");
                 return x1;      // return estimated root
             }
 
