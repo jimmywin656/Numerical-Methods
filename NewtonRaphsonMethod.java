@@ -11,22 +11,27 @@ public class NewtonRaphsonMethod {
         Function<Double, Double> derivative = x -> 6*(x*x) - 23.4*x + 17.7;
 
         // Initial guess for the root
-        double initialGuess = 1.0;      // guesses for 3 roots: 1, 2, 3
+        double initialGuess = 3.0;      // guesses for 3 roots: 1, 2, 3
 
         // Set the tolerance level for convergence
-        double tolerance = 0.0001;
+        double tolerance = 0.01;
 
         // Find the root using the Newton-Raphson method
         double root = newtonRaphsonMethod(function, derivative, initialGuess, tolerance);
 
         // Print the result
-        System.out.println("Root: " + root);
+        System.out.println();
+        System.out.println("Function converges at Root: " + root);
+        System.out.println();
     }
 
     private static double newtonRaphsonMethod(Function<Double, Double> function, Function<Double, Double> derivative,
                                                 double initialGuess, double tolerance) {
         double x0 = initialGuess;
 
+        System.out.println();
+        System.out.println("Newton Raphson Method");
+        System.out.println("-----------------------------------------------");
         System.out.println("n \t x \t\t f(x)");
         System.out.println("-----------------------------------------------");
         for (int i = 0; i < 100; i++) {
@@ -34,16 +39,11 @@ public class NewtonRaphsonMethod {
             printLine(i, x0, fx);
 
             if (Math.abs(fx) < tolerance) {
-                System.out.println("convergence");
                 return x0;      // return estimated root
             }
 
             // not necessary for newton raphson method but just a check , can delete if you want
             double fPrimeX = derivative.apply(x0);
-            if (Math.abs(fPrimeX) < 1e-15) {
-                System.out.println("Derivative is too close to zero, exiting");
-                return Double.NaN;
-            }
 
             x0 = x0 - fx / fPrimeX;
         }
