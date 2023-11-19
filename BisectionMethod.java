@@ -71,6 +71,5 @@ public class BisectionMethod {
         String formattedErr = decimalFormat.format(error);
 
         System.out.println(n + "\t" + formattedC + "\t\t" + formattedFc + "\t\t" + formattedErr);
-        // can also add a + b to table if want
     }
 }

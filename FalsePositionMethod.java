@@ -33,13 +33,17 @@ public class FalsePositionMethod {
 
         System.out.println();
         System.out.println("False Position Method");
-        System.out.println("---------------------------------");
-        System.out.println("n \t c \t\t f(c)");
-        System.out.println("---------------------------------");
+        System.out.println("------------------------------------------------");
+        System.out.println("n \t c \t\t f(c) \t      error");
+        System.out.println("------------------------------------------------");
         for (int i = 0; i < maxIter; i++) {
             double c = (a * fb - b * fa) / (fb - fa);
             double fc = function.apply(c);
-            printLine(i, c, fc);
+
+            // calculate the approx rel err     // fix this
+            double ea = Math.abs((c-b) / c) * 100;
+
+            printLine(i, c, fc, ea);
 
             if (Math.abs(fc) < error) {
                 return c;   // return estimated root
@@ -58,13 +62,13 @@ public class FalsePositionMethod {
         return Double.NaN;      // or return c if you want the latest root at n=100
     }
 
-    private static void printLine(int n, double c, double fc) {
+    private static void printLine(int n, double c, double fc, double error) {
         DecimalFormat decimalFormat = new DecimalFormat("#.####");
 
         String formattedC = decimalFormat.format(c);
         String formattedFc = decimalFormat.format(fc);
+        String formattedErr = decimalFormat.format(error);
 
-        System.out.println(n + "\t" + formattedC + "\t\t" + formattedFc);
-        // can also add a + b to table if want
+        System.out.println(n + "\t" + formattedC + "\t\t" + formattedFc + "\t\t" + formattedErr);
     }
 }
