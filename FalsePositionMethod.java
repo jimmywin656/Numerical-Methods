@@ -17,7 +17,9 @@ public class FalsePositionMethod {
         double root = falsePositionMethod(function, a, b, 100, tolerance);
 
         // Print the root
-        System.out.println("Root: " + root);
+        System.out.println();
+        System.out.println("Function converges at Root: " + root);
+        System.out.println();
     }
 
     private static double falsePositionMethod(Function<Double, Double> function, double a, double b, int maxIter, double error) {
@@ -29,6 +31,9 @@ public class FalsePositionMethod {
             return Double.NaN;
         }
 
+        System.out.println();
+        System.out.println("False Position Method");
+        System.out.println("---------------------------------");
         System.out.println("n \t c \t\t f(c)");
         System.out.println("---------------------------------");
         for (int i = 0; i < maxIter; i++) {
@@ -37,7 +42,6 @@ public class FalsePositionMethod {
             printLine(i, c, fc);
 
             if (Math.abs(fc) < error) {
-                System.out.println("convergence");
                 return c;   // return estimated root
             }
             if (fa * fc < 0) {
