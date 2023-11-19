@@ -7,31 +7,30 @@ public class ProjectThree {
         double tolerance = 0.01; // Error tolerance (ea)
         int maxIterations = 100;
         
-        double a = 0.0; // Lower bound of the interval
-        double b = 1.0; // Upper bound of the interval
+        double a = 120.0; // Lower bound of the interval
+        double b = 130.0; // Upper bound of the interval
+
+        // for newton raphson
+        double initialGuess = 125.0;
 
         // Define the function
         Function<Double, Double> function = x -> 2 * Math.pow(x, 3) - 11.7 * Math.pow(x, 2) + 17.7 * x - 5;
+        // Define the derivative of function 1
+        Function<Double, Double> derivative = x -> 6*(x*x) - 23.4*x + 17.7;
 
-        Function<Double, Double> bfunc = x -> Math.pow(x, 3) - 3*x + 1;
+        Function<Double, Double> function2 = x -> x + 10 - x*Math.cosh(50/x);
 
-        // Root-finding methods
-        double bisectionResult = bisectionMethod(bfunc, a, b, maxIterations, tolerance);
-        double falsePositionResult = falsePositionMethod(function, a, b, maxIterations, tolerance);
+        // Root-finding methods for function 1
+        // double bisectionResult = bisectionMethod(function, a, b, maxIterations, tolerance);
+        // double falsePositionResult = falsePositionMethod(function, a, b, maxIterations, tolerance);
+        // double newtonRaphsonResult = newtonRaphsonMethod(function, derivative, initialGuess, tolerance);
+        // double secantResult = secantMethod(function, a, b, tolerance);
 
-        // for newton raphson
-        double initialGuess = 1.0;
-        // for secant method
-        double x0 = 0.0;
-        double x1 = 1.0;
-
-         // Define the derivative of function 1
-         Function<Double, Double> derivative = x -> 6*(x*x) - 23.4*x + 17.7;
-
-        double newtonRaphsonResult = newtonRaphsonMethod(function, derivative, initialGuess, tolerance);
-        double secantResult = secantMethod(function, x0, x1, tolerance);
-
-        
+        // Root-finding methods for function 2
+        double bisectionResult = bisectionMethod(function2, a, b, maxIterations, tolerance);
+        double falsePositionResult = falsePositionMethod(function2, a, b, maxIterations, tolerance);
+        double newtonRaphsonResult = newtonRaphsonMethod(function2, derivative, initialGuess, tolerance);
+        double secantResult = secantMethod(function2, a, b, tolerance);
     }
 
     private static double bisectionMethod(Function<Double, Double> function, double a, double b, int maxIter,double error) {
