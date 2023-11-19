@@ -47,23 +47,35 @@ public class ProjectThree {
 
         System.out.println();
         System.out.println("Bisection Method");
-        System.out.println("------------------------------------------------");
-        System.out.println("n \t c \t\t f(c) \t\t error \\t\\t rel. approx. err");
-        System.out.println("------------------------------------------------");
+        System.out.println("--------------------------------------------------------------------------");
+        System.out.println("n \t c \t\t f(c) \t\t error \t\t    approx. err");
+        System.out.println("--------------------------------------------------------------------------");
+        double prevC = currentError/2 + a;
+
         for (int i = 0; i < maxIter; i++) {
             currentError = currentError/2;
             double c = a + currentError;
             double fc = function.apply(c);
+            double relError;
 
-            printBisection(i, c, fc, currentError);
+            if (i==0) {
+                relError = 1.0;
+            } else {
+                relError = Math.abs((c - prevC) / c);
+            }
 
-            if (Math.abs(currentError) < error) {
+            printBisection(i, c, fc, currentError, relError);
+
+            if (relError < error) {
                 // Print the root
                 System.out.println();
-                System.out.println("Function converges at Root: " + c);
+                System.out.println("Function converges at Root: " + c + " after " + (i+1) + " iterations.");
                 System.out.println();
                 return c;   // return estimated root
             }
+
+            prevC = c;
+
             if (fa*fc < 0) {        // signs != 
                 b = c;
                 fb = fc;
@@ -89,9 +101,9 @@ public class ProjectThree {
 
         System.out.println();
         System.out.println("False Position Method");
-        System.out.println("------------------------------------------------");
-        System.out.println("n \t c \t\t f(c) \t      error");
-        System.out.println("------------------------------------------------");
+        System.out.println("-------------------------------------------------------");
+        System.out.println("n \t c \t\t f(c) \t\t approx. error");
+        System.out.println("-------------------------------------------------------");
 
         double prevC = (a * fb - b * fa) / (fb - fa);
 
@@ -112,7 +124,7 @@ public class ProjectThree {
             if (ea < error) {
                 // Print the root
                 System.out.println();
-                System.out.println("Function converges at Root: " + c);
+                System.out.println("Function converges at Root: " + c + " after " + (i+1) + " iterations.");
                 System.out.println();
                 return c;   // return estimated root
             }
@@ -141,9 +153,9 @@ public class ProjectThree {
 
         System.out.println();
         System.out.println("Newton Raphson Method");
-        System.out.println("--------------------------------------------------");
-        System.out.println("n \t x \t\t f(x) \t\t error");
-        System.out.println("--------------------------------------------------");
+        System.out.println("-------------------------------------------------------");
+        System.out.println("n \t x \t\t f(x) \t\t approx. error");
+        System.out.println("-------------------------------------------------------");
         for (int i = 0; i < 100; i++) {
             double fx = function.apply(x0);
             double fPrimeX = derivative.apply(x0);
@@ -159,7 +171,7 @@ public class ProjectThree {
             if (ea < tolerance) {
                 // Print the root
                 System.out.println();
-                System.out.println("Function converges at Root: " + x0);
+                System.out.println("Function converges at Root: " + x0 + " after " + (i+1) + " iterations.");
                 System.out.println();
                 return x0;      // return estimated root
             }
@@ -173,9 +185,9 @@ public class ProjectThree {
     private static double secantMethod(Function<Double, Double> function, double x0, double x1, double tolerance) {
         System.out.println();
         System.out.println("Secant Method");
-        System.out.println("------------------------------------------------");
-        System.out.println("n \t x \t\t f(x) \t\t error");
-        System.out.println("------------------------------------------------");
+        System.out.println("-------------------------------------------------------");
+        System.out.println("n \t x \t\t f(x) \t\t approx error.");
+        System.out.println("-------------------------------------------------------");
 
         for (int i = 0; i < 100; i++) {
             double fx0 = function.apply(x0);
@@ -195,7 +207,7 @@ public class ProjectThree {
             if (ea < tolerance) {
                 // Print the root
                 System.out.println();
-                System.out.println("Function converges at Root: " + x1);
+                System.out.println("Function converges at Root: " + x1 + " after " + (i+1) + " iterations.");
                 System.out.println();
                 return x1;      // return estimated root
             }
@@ -206,45 +218,51 @@ public class ProjectThree {
         return Double.NaN;
     }
 
-    private static void printBisection(int n, double c, double fc, double error) {
-        DecimalFormat decimalFormat = new DecimalFormat("#.####");
+    private static void printBisection(int n, double c, double fc, double error, double relError) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.######");
+        DecimalFormat errorFormat = new DecimalFormat("#.########");
 
-        String formattedC = decimalFormat.format(c);
-        String formattedFc = decimalFormat.format(fc);
-        String formattedErr = decimalFormat.format(error);
-
-        System.out.println(n + "\t" + formattedC + "\t\t" + formattedFc + "\t\t" + formattedErr);
+        String formattedN = String.format("%-9d", n);
+        String formattedC = String.format("%-16s", decimalFormat.format(c));
+        String formattedFc = String.format("%-16s", decimalFormat.format(fc));
+        String formattedErr = String.format("%-20s", errorFormat.format(error));
+        String formattedRelErr = String.format("%-20s", errorFormat.format(relError));
+        
+        System.out.println(formattedN + formattedC + formattedFc + formattedErr + formattedRelErr);
     }
 
-    private static void printFalsePosition(int n, double c, double fc, double error) {
-        DecimalFormat decimalFormat = new DecimalFormat("#.####");
+    private static void printFalsePosition(int n, double c, double fc, double relError) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.######");
+        DecimalFormat errorFormat = new DecimalFormat("#.########");
 
-        String formattedC = decimalFormat.format(c);
-        String formattedFc = decimalFormat.format(fc);
-        String formattedErr = decimalFormat.format(error);
-
-        System.out.println(n + "\t" + formattedC + "\t\t" + formattedFc + "\t\t" + formattedErr);
+        String formattedN = String.format("%-9d", n);
+        String formattedC = String.format("%-16s", decimalFormat.format(c));
+        String formattedFc = String.format("%-17s", decimalFormat.format(fc));
+        String formattedRelErr = String.format("%-20s", errorFormat.format(relError));
+        
+        System.out.println(formattedN + formattedC + formattedFc + formattedRelErr);
     }
 
     private static void printNewton(int n, double x, double fx, double ea) {
-        DecimalFormat decimalFormat = new DecimalFormat("#.####");
+        DecimalFormat decimalFormat = new DecimalFormat("#.######");
+        DecimalFormat errorFormat = new DecimalFormat("#.########");
     
         String formattedN = String.format("%-9d", n);
         String formattedX = String.format("%-16s", decimalFormat.format(x));
         String formattedFx = String.format("%-16s", decimalFormat.format(fx));
-        String formattedEa = String.format("%-20s", decimalFormat.format(ea));
+        String formattedEa = String.format("%-20s", errorFormat.format(ea));
     
         System.out.println(formattedN + formattedX + formattedFx + formattedEa);
     }
 
     private static void printSecant(int n, double x, double fx, double ea) {
-        DecimalFormat decimalFormat = new DecimalFormat("#.####");
-        DecimalFormat errorFormat = new DecimalFormat("#.######");
+        DecimalFormat decimalFormat = new DecimalFormat("#.######");
+        DecimalFormat errorFormat = new DecimalFormat("#.########");
     
         String formattedN = String.format("%-9d", n);
         String formattedX = String.format("%-16s", decimalFormat.format(x));
         String formattedFx = String.format("%-16s", decimalFormat.format(fx));
-        String formattedEa = String.format("%-20s", decimalFormat.format(ea));
+        String formattedEa = String.format("%-20s", errorFormat.format(ea));
     
         System.out.println(formattedN + formattedX + formattedFx + formattedEa);
     }
