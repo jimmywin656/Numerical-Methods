@@ -6,8 +6,8 @@ public class ProjectThree {
         double tolerance = 0.01; // Error tolerance (ea)
         int maxIterations = 100;
         
-        double a = 0.0; // Lower bound of the interval
-        double b = 4.0; // Upper bound of the interval
+        // double a = 0.0; // Lower bound of the interval
+        // double b = 4.0; // Upper bound of the interval
 
         // Define the function
         Function<Double, Double> function = x -> 2 * Math.pow(x, 3) - 11.7 * Math.pow(x, 2) + 17.7 * x - 5;
