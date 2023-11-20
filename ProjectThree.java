@@ -17,6 +17,7 @@ public class ProjectThree {
 
         Scanner scan = new Scanner(System.in);
 
+        System.out.println();
         System.out.println("Select a function to test: ");
         System.out.println("-----------------------");
         System.out.println("1. f(x) = 2x^3 - 11.7x^2 + 17.7x - 5");

@@ -32,22 +32,38 @@ public class FalsePositionMethod {
         }
 
         System.out.println();
-        System.out.println("False Position Method");
-        System.out.println("------------------------------------------------");
-        System.out.println("n \t c \t\t f(c) \t      error");
-        System.out.println("------------------------------------------------");
+        System.out.println("False Position Method from [" + a + ", " + b + "]");
+        System.out.println("-------------------------------------------------------");
+        System.out.println("n \t c \t\t f(c) \t\t approx. error");
+        System.out.println("-------------------------------------------------------");
+
+        double prevC = (a * fb - b * fa) / (fb - fa);
+
         for (int i = 0; i < maxIter; i++) {
             double c = (a * fb - b * fa) / (fb - fa);
             double fc = function.apply(c);
+            double ea;
 
-            // calculate the approx rel err     // fix this
-            double ea = Math.abs((c-b) / c) * 100;
+            if (i == 0) {
+                ea = 1.0;
+            } else {
+                // calculate the approx rel err     // fix this
+                ea = Math.abs((prevC - c) / prevC);
+            }
 
-            printLine(i, c, fc, ea);
+            printFalsePosition(i, c, fc, ea);
 
-            if (Math.abs(fc) < error) {
+            if (ea < error) {
+                // Print the root
+                System.out.println();
+                System.out.println("Function converges at Root: " + c + " after " + (i+1) + " iterations.");
+                System.out.println();
                 return c;   // return estimated root
             }
+
+            // update prevC for next iteration
+            prevC = c;
+
             if (fa * fc < 0) {
                 b = c;
                 fb = fc;
@@ -62,13 +78,15 @@ public class FalsePositionMethod {
         return Double.NaN;      // or return c if you want the latest root at n=100
     }
 
-    private static void printLine(int n, double c, double fc, double error) {
-        DecimalFormat decimalFormat = new DecimalFormat("#.####");
+    private static void printFalsePosition(int n, double c, double fc, double relError) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.######");
+        DecimalFormat errorFormat = new DecimalFormat("#.########");
 
-        String formattedC = decimalFormat.format(c);
-        String formattedFc = decimalFormat.format(fc);
-        String formattedErr = decimalFormat.format(error);
-
-        System.out.println(n + "\t" + formattedC + "\t\t" + formattedFc + "\t\t" + formattedErr);
+        String formattedN = String.format("%-9d", n);
+        String formattedC = String.format("%-16s", decimalFormat.format(c));
+        String formattedFc = String.format("%-17s", decimalFormat.format(fc));
+        String formattedRelErr = String.format("%-20s", errorFormat.format(relError));
+        
+        System.out.println(formattedN + formattedC + formattedFc + formattedRelErr);
     }
 }

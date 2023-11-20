@@ -16,39 +16,38 @@ public class SecantMethod {
 
         // Find the root using the secant method
         double root = secantMethod(function, x0, x1, tolerance);
-
-        // Print the result
-        System.out.println();
-        System.out.println("Function converges at Root: " + root);
-        System.out.println();
     }
 
     // Secant method implementation
     private static double secantMethod(Function<Double, Double> function, double x0, double x1, double tolerance) {
         System.out.println();
-        System.out.println("Secant Method");
-        System.out.println("------------------------------------------------");
-        System.out.println("n \t x \t\t f(x) \t\t error");
-        System.out.println("------------------------------------------------");
+        System.out.println("Secant Method from [" + x0 + ", " + x1 + "]");
+        System.out.println("-------------------------------------------------------");
+        System.out.println("n \t x \t\t f(x) \t\t approx error.");
+        System.out.println("-------------------------------------------------------");
 
         for (int i = 0; i < 100; i++) {
             double fx0 = function.apply(x0);
             double fx1 = function.apply(x1);
 
-            // calculate the approx. rel err
-            double ea = Math.abs((x1-x0) / x1) * 100;
-
-            printLine(i, fx0, fx1, ea);
-
-            if (Math.abs(fx1) < tolerance) {
-                return x1;      // return estimated root
-            }
-
             // update the estimates using the secant formula
             double x2 = x1 - fx1 * ((x1 - x0) / (fx1 - fx0));
 
+            // calculate the approx. rel err
+            double ea = Math.abs((x2-x1) / x2);
+
+            printSecant(i, fx0, fx1, ea);
+
             x0 = x1;
             x1 = x2;
+
+            if (ea < tolerance) {
+                // Print the root
+                System.out.println();
+                System.out.println("Function converges at Root: " + x1 + " after " + (i+1) + " iterations.");
+                System.out.println();
+                return x1;      // return estimated root
+            }
         }
 
         // Max iterations reached
@@ -56,13 +55,14 @@ public class SecantMethod {
         return Double.NaN;
     }
 
-    private static void printLine(int n, double x, double fx, double ea) {
-        DecimalFormat decimalFormat = new DecimalFormat("#.####");
+    private static void printSecant(int n, double x, double fx, double ea) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.######");
+        DecimalFormat errorFormat = new DecimalFormat("#.########");
     
         String formattedN = String.format("%-9d", n);
         String formattedX = String.format("%-16s", decimalFormat.format(x));
         String formattedFx = String.format("%-16s", decimalFormat.format(fx));
-        String formattedEa = String.format("%-20s", decimalFormat.format(ea));
+        String formattedEa = String.format("%-20s", errorFormat.format(ea));
     
         System.out.println(formattedN + formattedX + formattedFx + formattedEa);
     }

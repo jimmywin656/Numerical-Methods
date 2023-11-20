@@ -11,44 +11,44 @@ public class NewtonRaphsonMethod {
         Function<Double, Double> derivative = x -> 6*(x*x) - 23.4*x + 17.7;
 
         // Initial guess for the root
-        double initialGuess = 4.0;      // guesses for 3 roots: 1, 2, 4
+        double initialGuess = 3.0;      // guesses for 3 roots: 1, 2, 4
 
         // Set the tolerance level for convergence
         double tolerance = 0.01;
 
         // Find the root using the Newton-Raphson method
         double root = newtonRaphsonMethod(function, derivative, initialGuess, tolerance);
-
-        // Print the result
-        System.out.println();
-        System.out.println("Function converges at Root: " + root);
-        System.out.println();
     }
 
-    private static double newtonRaphsonMethod(Function<Double, Double> function, Function<Double, Double> derivative,
-                                                double initialGuess, double tolerance) {
+    private static double newtonRaphsonMethod(Function<Double, Double> function, Function<Double, Double> derivative, double initialGuess, double tolerance) {
+        
+        double prev = initialGuess;
         double x0 = initialGuess;
 
         System.out.println();
-        System.out.println("Newton Raphson Method");
-        System.out.println("--------------------------------------------------");
-        System.out.println("n \t x \t\t f(x) \t\t error");
-        System.out.println("--------------------------------------------------");
+        System.out.println("Newton Raphson Method with Initial guess of " + initialGuess);
+        System.out.println("-------------------------------------------------------");
+        System.out.println("n \t x \t\t f(x) \t\t approx. error");
+        System.out.println("-------------------------------------------------------");
         for (int i = 0; i < 100; i++) {
             double fx = function.apply(x0);
             double fPrimeX = derivative.apply(x0);
 
+            prev = x0;
+            x0 = x0 - fx / fPrimeX;
+            
             // calculate the approximate relative error
-            double ea = Math.abs((x0-(x0-fx / fPrimeX)) / x0) * 100;
+            double ea = Math.abs((x0 - prev) / x0);
 
-            printLine(i, x0, fx, ea);
+            printNewton(i, prev, fx, ea);
 
-            if (Math.abs(fx) < tolerance) {
+            if (ea < tolerance) {
+                // Print the root
+                System.out.println();
+                System.out.println("Function converges at Root: " + x0 + " after " + (i+1) + " iterations.");
+                System.out.println();
                 return x0;      // return estimated root
             }
-
-
-            x0 = x0 - fx / fPrimeX;
         }
 
         // Max iterations reached
@@ -56,13 +56,14 @@ public class NewtonRaphsonMethod {
         return Double.NaN;      // or can return x0 if you want the latest estimated root
     }
 
-    private static void printLine(int n, double x, double fx, double ea) {
-        DecimalFormat decimalFormat = new DecimalFormat("#.####");
+    private static void printNewton(int n, double x, double fx, double ea) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.######");
+        DecimalFormat errorFormat = new DecimalFormat("#.########");
     
         String formattedN = String.format("%-9d", n);
         String formattedX = String.format("%-16s", decimalFormat.format(x));
         String formattedFx = String.format("%-16s", decimalFormat.format(fx));
-        String formattedEa = String.format("%-20s", decimalFormat.format(ea));
+        String formattedEa = String.format("%-20s", errorFormat.format(ea));
     
         System.out.println(formattedN + formattedX + formattedFx + formattedEa);
     }

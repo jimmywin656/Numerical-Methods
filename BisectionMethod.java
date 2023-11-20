@@ -36,19 +36,36 @@ public class BisectionMethod {
         double currentError = b - a;
 
         System.out.println();
-        System.out.println("Bisection Method");
-        System.out.println("------------------------------------------------");
-        System.out.println("n \t c \t\t f(c) \t\t error");
-        System.out.println("------------------------------------------------");
+        System.out.println("Bisection Method from [" + a + ", " + b + "]");
+        System.out.println("--------------------------------------------------------------------------");
+        System.out.println("n \t c \t\t f(c) \t\t error \t\t    approx. err");
+        System.out.println("--------------------------------------------------------------------------");
+        double prevC = currentError/2 + a;
+
         for (int i = 0; i < maxIter; i++) {
             currentError = currentError/2;
             double c = a + currentError;
             double fc = function.apply(c);
-            printLine(i, c, fc, currentError);
+            double relError;
 
-            if (Math.abs(currentError) < error) {
+            if (i==0) {
+                relError = 1.0;
+            } else {
+                relError = Math.abs((c - prevC) / c);
+            }
+
+            printBisection(i, c, fc, currentError, relError);
+
+            if (relError < error) {
+                // Print the root
+                System.out.println();
+                System.out.println("Function converges at Root: " + c + " after " + (i+1) + " iterations.");
+                System.out.println();
                 return c;   // return estimated root
             }
+
+            prevC = c;
+
             if (fa*fc < 0) {        // signs != 
                 b = c;
                 fb = fc;
@@ -63,13 +80,16 @@ public class BisectionMethod {
         return Double.NaN;      // or return c if you want the latest root at n=100
     }
 
-    private static void printLine(int n, double c, double fc, double error) {
-        DecimalFormat decimalFormat = new DecimalFormat("#.####");
+    private static void printBisection(int n, double c, double fc, double error, double relError) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.######");
+        DecimalFormat errorFormat = new DecimalFormat("#.########");
 
-        String formattedC = decimalFormat.format(c);
-        String formattedFc = decimalFormat.format(fc);
-        String formattedErr = decimalFormat.format(error);
-
-        System.out.println(n + "\t" + formattedC + "\t\t" + formattedFc + "\t\t" + formattedErr);
+        String formattedN = String.format("%-9d", n);
+        String formattedC = String.format("%-16s", decimalFormat.format(c));
+        String formattedFc = String.format("%-16s", decimalFormat.format(fc));
+        String formattedErr = String.format("%-20s", errorFormat.format(error));
+        String formattedRelErr = String.format("%-20s", errorFormat.format(relError));
+        
+        System.out.println(formattedN + formattedC + formattedFc + formattedErr + formattedRelErr);
     }
 }
