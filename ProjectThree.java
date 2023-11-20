@@ -1,36 +1,63 @@
 import java.text.DecimalFormat;
 import java.util.function.Function;
+import java.util.Scanner;
 
 public class ProjectThree {
 
     public static void main(String[] args) {
         double tolerance = 0.01; // Error tolerance (ea)
         int maxIterations = 100;
-        
-        double a = 120.0; // Lower bound of the interval
-        double b = 130.0; // Upper bound of the interval
-
-        // for newton raphson
-        double initialGuess = 125.0;
 
         // Define the function
-        Function<Double, Double> function = x -> 2 * Math.pow(x, 3) - 11.7 * Math.pow(x, 2) + 17.7 * x - 5;
-        // Define the derivative of function 1
-        Function<Double, Double> derivative = x -> 6*(x*x) - 23.4*x + 17.7;
+        Function<Double, Double> function1 = x -> 2 * Math.pow(x, 3) - 11.7 * Math.pow(x, 2) + 17.7 * x - 5;
+        Function<Double, Double> derivative1 = x -> 6*(x*x) - 23.4*x + 17.7;
 
         Function<Double, Double> function2 = x -> x + 10 - x*Math.cosh(50/x);
+        Function<Double, Double> derivative2 = x -> (50*Math.sinh(50/x))/x - Math.cosh(50/x) + 1;
 
-        // Root-finding methods for function 1
-        // double bisectionResult = bisectionMethod(function, a, b, maxIterations, tolerance);
-        // double falsePositionResult = falsePositionMethod(function, a, b, maxIterations, tolerance);
-        // double newtonRaphsonResult = newtonRaphsonMethod(function, derivative, initialGuess, tolerance);
-        // double secantResult = secantMethod(function, a, b, tolerance);
+        Scanner scan = new Scanner(System.in);
 
-        // Root-finding methods for function 2
-        double bisectionResult = bisectionMethod(function2, a, b, maxIterations, tolerance);
-        double falsePositionResult = falsePositionMethod(function2, a, b, maxIterations, tolerance);
-        double newtonRaphsonResult = newtonRaphsonMethod(function2, derivative, initialGuess, tolerance);
-        double secantResult = secantMethod(function2, a, b, tolerance);
+        System.out.println("Select a function to test: ");
+        System.out.println("-----------------------");
+        System.out.println("1. f(x) = 2x^3 - 11.7x^2 + 17.7x - 5");
+        System.out.println("2. f(x) = x + 10 - xcosh(50/x)");
+        int choice = scan.nextInt();
+
+        if (choice == 1) {
+            System.out.println("Please enter in 2 guesses/starting interval to be used in the calculation for Bisection, False Position, and Secant Method");
+            System.out.print("Guess 1: ");
+            double guess1 = scan.nextDouble();
+            System.out.print("Guess 2: ");
+            double guess2 = scan.nextDouble();
+
+            System.out.println("Please enter in an initial guess to be used in the calculation for Newton Raphson Method");
+            System.out.print("Initial guess: ");
+            double initialGuess = scan.nextDouble();
+
+            // Root-finding methods for function 1
+            double bisectionResult = bisectionMethod(function1, guess1, guess2, maxIterations, tolerance);
+            double falsePositionResult = falsePositionMethod(function1, guess1, guess2, maxIterations, tolerance);
+            double newtonRaphsonResult = newtonRaphsonMethod(function1, derivative1, initialGuess, tolerance);
+            double secantResult = secantMethod(function1, guess1, guess2, tolerance);
+        } else if (choice == 2) {
+            System.out.println("Please enter in 2 guesses/starting interval to be used in the calculation for Bisection, False Position, and Secant Method");
+            System.out.print("Guess 1: ");
+            double guess1 = scan.nextDouble();
+            System.out.print("Guess 2: ");
+            double guess2 = scan.nextDouble();
+
+            System.out.println("Please enter in an initial guess to be used in the calculation for Newton Raphson Method");
+            System.out.print("Initial guess: ");
+            double initialGuess = scan.nextDouble();
+
+            // Root-finding methods for function 1
+            double bisectionResult = bisectionMethod(function2, guess1, guess2, maxIterations, tolerance);
+            double falsePositionResult = falsePositionMethod(function2, guess1, guess2, maxIterations, tolerance);
+            double newtonRaphsonResult = newtonRaphsonMethod(function2, derivative2, initialGuess, tolerance);
+            double secantResult = secantMethod(function2, guess1, guess2, tolerance);
+        } else {
+            System.out.println("Invalid input. Try again.");
+        }
     }
 
     private static double bisectionMethod(Function<Double, Double> function, double a, double b, int maxIter,double error) {
@@ -45,7 +72,7 @@ public class ProjectThree {
         double currentError = b - a;
 
         System.out.println();
-        System.out.println("Bisection Method");
+        System.out.println("Bisection Method from [" + a + ", " + b + "]");
         System.out.println("--------------------------------------------------------------------------");
         System.out.println("n \t c \t\t f(c) \t\t error \t\t    approx. err");
         System.out.println("--------------------------------------------------------------------------");
@@ -99,7 +126,7 @@ public class ProjectThree {
         }
 
         System.out.println();
-        System.out.println("False Position Method");
+        System.out.println("False Position Method from [" + a + ", " + b + "]");
         System.out.println("-------------------------------------------------------");
         System.out.println("n \t c \t\t f(c) \t\t approx. error");
         System.out.println("-------------------------------------------------------");
@@ -151,7 +178,7 @@ public class ProjectThree {
         double x0 = initialGuess;
 
         System.out.println();
-        System.out.println("Newton Raphson Method");
+        System.out.println("Newton Raphson Method with Initial guess of " + initialGuess);
         System.out.println("-------------------------------------------------------");
         System.out.println("n \t x \t\t f(x) \t\t approx. error");
         System.out.println("-------------------------------------------------------");
@@ -183,7 +210,7 @@ public class ProjectThree {
 
     private static double secantMethod(Function<Double, Double> function, double x0, double x1, double tolerance) {
         System.out.println();
-        System.out.println("Secant Method");
+        System.out.println("Secant Method from [" + x0 + ", " + x1 + "]");
         System.out.println("-------------------------------------------------------");
         System.out.println("n \t x \t\t f(x) \t\t approx error.");
         System.out.println("-------------------------------------------------------");
@@ -266,11 +293,4 @@ public class ProjectThree {
         System.out.println(formattedN + formattedX + formattedFx + formattedEa);
     }
 
-
-    public static double derivative(Function<Double, Double> f, double x) {
-    // Calculate the derivative of the function at point x using a numerical approximation
-    double h = 1e-6; // Small value for numerical differentiation
-    return (f.apply(x + h) - f.apply(x)) / h;
-    }
-    
 }
