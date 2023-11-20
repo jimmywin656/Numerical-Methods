@@ -24,7 +24,7 @@ public class ProjectThree {
         int choice = scan.nextInt();
 
         if (choice == 1) {
-            System.out.println("Please enter in 2 guesses/starting interval to be used in the calculation for Bisection, False Position, and Secant Method");
+            System.out.println("Please enter in 2 guesses/starting values to be used in the calculation for Bisection, False Position, and Secant Method");
             System.out.print("Guess 1: ");
             double guess1 = scan.nextDouble();
             System.out.print("Guess 2: ");
@@ -40,7 +40,7 @@ public class ProjectThree {
             double newtonRaphsonResult = newtonRaphsonMethod(function1, derivative1, initialGuess, tolerance);
             double secantResult = secantMethod(function1, guess1, guess2, tolerance);
         } else if (choice == 2) {
-            System.out.println("Please enter in 2 guesses/starting interval to be used in the calculation for Bisection, False Position, and Secant Method");
+            System.out.println("Please enter in 2 guesses/starting values to be used in the calculation for Bisection, False Position, and Secant Method");
             System.out.print("Guess 1: ");
             double guess1 = scan.nextDouble();
             System.out.print("Guess 2: ");
