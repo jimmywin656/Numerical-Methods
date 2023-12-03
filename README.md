@@ -12,9 +12,13 @@ Welcome to my GitHub repository for all the class projects I've worked on. Each 
 - Branch: project-2
 - Description: The program solves systems of linear equations using the Jacobi and Gauss-Seidel iterative methods. It checks for convergence with user-specified errors and provides the solution at each iteration.
 
-### Project 3: TBD
+### Project 3: Root Finding Methods + Error Analysis
 - Branch: project-3
-- Description: TBD
+- Description: Implements root-finding methods (Bisection, Newton-Raphson, Secant, False-Position) with error analysis. Find roots for specific functions and plot error curves for each method (done separately).
+
+### Project 4: Interpolating Polynomials
+- Branch: project-4
+- Description: Reads x and f(x) values from a user-specified text file and generates a divided difference table, and constructs interpolating polynomials in Newton's, Lagrange's, and its Simplified form.
 
 ## Getting Started
 
