@@ -239,11 +239,6 @@ public class ProjectFour {
     private static String formatCoefficient(double coefficient) {
         if (coefficient == 0) {
             return "";
-        // } else if (coefficient == (int) coefficient) {
-        //     return String.valueOf((int) coefficient);
-        // } else {
-        //     return String.valueOf(coefficient);
-        // }
         } else {
             // Round the coefficient to 2 decimal places
             String formattedCoefficient = String.format("%.2f", coefficient);
