@@ -7,6 +7,7 @@ public class ProjectFour {
     public static void main(String[] args) {
         try {
             Scanner scanner = new Scanner(System.in);
+            System.out.println();
             System.out.print("Enter the file name: ");
             String fileName = scanner.nextLine();
             scanner.close();
@@ -41,6 +42,7 @@ public class ProjectFour {
     }
 
     private static void printNewtonForm(double[] x, double[] y) {
+        System.out.println();
         System.out.println("Newton's Form:");
         double[] dividedDifferenceCoefficients = calculateDividedDifferenceCoefficients(x, y);
     
@@ -164,6 +166,7 @@ public class ProjectFour {
     
 
     private static void printDividedDifferenceTable(double[] x, double[] y) {
+        System.out.println();
         System.out.println("Divided Difference:");
         int n = x.length;
         double[][] f = calculateDividedDifferenceTable(x, y);
